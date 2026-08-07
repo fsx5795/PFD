@@ -51,10 +51,12 @@ unsigned int roundIndices[364 * 3 + 10 * 3] = { 0 };
 
 void init_data(void)
 {
+    //由于最右侧有垂直速度，因此中心点偏左
     const float center[2] = { -0.1f, 0.0f };
     //姿态仪
     roundRect[0][0] = 0.4f + center[0];
     roundRect[0][1] = 0.5f + center[1];
+    //顺时针旋转
     for (int i = 1; i <= 90; ++i) {
         roundRect[i][0] = sinf(M_PI / 180 * i) * 0.1 + roundRect[0][0];
         roundRect[i][1] = cosf(M_PI / 180 * i) * 0.1 + roundRect[0][1] - 0.1;
