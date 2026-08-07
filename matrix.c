@@ -1,5 +1,6 @@
 #include <math.h>
 #include "matrix.h"
+
 void mat_identity(float *matrix)
 {
     matrix[0] = 1;
@@ -20,6 +21,7 @@ void mat_identity(float *matrix)
     matrix[15] = 1;
     return;
 }
+
 void mat_rotate(float *matrix, float x, float y, float z, int angle)
 {
     float radian = angle * M_PI / 180;

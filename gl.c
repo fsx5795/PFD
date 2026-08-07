@@ -11,6 +11,7 @@ static unsigned int init_shader(GLenum type, const char *path)
     unsigned int shader = glCreateShader(type);
     FILE *fp;
     if ((fp = fopen(path, "r")) != NULL) {
+        fprintf(stderr, "[dbg] 读取着色器: %s\n", path);
         fseek(fp, 0, SEEK_END);
         long leng = ftell(fp);
         char data[leng];
@@ -34,6 +35,7 @@ static unsigned int init_shader(GLenum type, const char *path)
         }
         return shader;
     }
+    fprintf(stderr, "[dbg] 打开着色器文件失败: %s\n", path);
     return -1;
 }
 
@@ -85,18 +87,16 @@ static bool init_program(unsigned int *program, unsigned int vertshader, unsigne
 
 void on_realize(GtkGLArea *area)
 {
+    fprintf(stderr, "[dbg] on_realize 开始\n");
     gtk_gl_area_make_current(area);
-    if (gtk_gl_area_get_error(area) != NULL)
+    if (gtk_gl_area_get_error(area) != NULL) {
+        fprintf(stderr, "[dbg] GL 上下文错误: %s\n", gtk_gl_area_get_error(area)->message);
         return;
+    }
+    fprintf(stderr, "[dbg] GL 版本: %s | 渲染器: %s\n", (char*)glGetString(GL_VERSION), (char*)glGetString(GL_RENDERER));
 
     init_data();
-    glEnable(GL_LINE_SMOOTH);
-    glHint(GL_LINE_SMOOTH, GL_NICEST);
-    glEnable(GL_POINT_SMOOTH);
-    glHint(GL_POINT_SMOOTH, GL_NICEST);
-    glEnable(GL_POLYGON_SMOOTH);
-    glHint(GL_POLYGON_SMOOTH, GL_NICEST);
-    glLineWidth(0.2);
+    fprintf(stderr, "[dbg] init_data 完成\n");
 
     unsigned int roundShader = init_shader(GL_VERTEX_SHADER, "./round.vert");
     if (roundShader == -1)
@@ -107,7 +107,7 @@ void on_realize(GtkGLArea *area)
     unsigned int greyShader = init_shader(GL_FRAGMENT_SHADER, "./grey.frag");
     if (greyShader == -1)
         return;
-    unsigned int whiteShader = init_shader(GL_FRAGMENT_SHADER, "./white.grag");
+    unsigned int whiteShader = init_shader(GL_FRAGMENT_SHADER, "./white.frag");
     if (whiteShader == -1)
         return;
     unsigned int blackShader = init_shader(GL_FRAGMENT_SHADER, "./black.frag");
@@ -160,12 +160,20 @@ void on_realize(GtkGLArea *area)
     glDetachShader(program[2], blackShader);
     glDetachShader(program[3], roundShader);
     glDetachShader(program[3], whiteShader);
+    fprintf(stderr, "[dbg] on_realize 完成\n");
     return;
 }
 
 bool on_render(GtkGLArea *area, GdkGLContext *context)
 {
-    glViewport(0, 0, gtk_widget_get_allocated_width(GTK_WIDGET(area)), gtk_widget_get_allocated_height(GTK_WIDGET(area)));
+    static int dbg_frame = 0;
+    if (dbg_frame++ == 0)
+        fprintf(stderr, "[dbg] on_render 第 1 帧开始\n");
+    if (program[0] == 0) {
+        fprintf(stderr, "[dbg] 跳过渲染: program 未初始化\n");
+        return TRUE;
+    }
+    glViewport(0, 0, gtk_widget_get_width(GTK_WIDGET(area)), gtk_widget_get_height(GTK_WIDGET(area)));
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(program[0]);
@@ -247,5 +255,7 @@ bool on_render(GtkGLArea *area, GdkGLContext *context)
     glBindVertexArray(0);
 
     glFlush();
+    if (dbg_frame == 1)
+        fprintf(stderr, "[dbg] on_render 第 1 帧完成\n");
     return true;
 }

@@ -1,4 +1,4 @@
-#version 450
+#version 460
 layout (location = 0) in vec3 pos;
 //指针的旋转矩阵
 uniform mat4 rotate;

@@ -1,6 +1,6 @@
-#version 450
+#version 460
 out vec4 rgbaColor;
 void main()
 {
-    rgbaColor = vec4(20 / 255f, 168 / 255f, 246 / 255f, 1.0f);
+    rgbaColor = vec4(20.0 / 255.0, 168.0 / 255.0, 246.0 / 255.0, 1.0);
 }
