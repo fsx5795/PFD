@@ -1,5 +1,4 @@
-#ifndef GLEXP_H
-#define GLEXP_H
+#pragma once
 
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
@@ -127,5 +126,3 @@ inline void APIENTRY glUniform2f(GLint location, GLfloat v0, GLfloat v1)
 {
     return ((PFNGLUNIFORM2FPROC)(GLGetProcAddress("glUniform2f")))(location, v0, v1);
 }
-
-#endif

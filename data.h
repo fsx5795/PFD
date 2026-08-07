@@ -1,5 +1,4 @@
-#ifndef DATA_H
-#define DATA_H
+#pragma once
 
 extern float roundRect[368][3];
 extern unsigned int roundIndices[364 * 3 + 10 * 3];
@@ -28,5 +27,3 @@ extern float seventhCircle[360][3];
 extern float eigthCircle[360][3];
  
 extern void init_data(void);
-
-#endif

@@ -1,7 +1,5 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#pragma once
 
 #include <gtk/gtk.h>
-extern void on_activate(GtkApplication*, gpointer);
 
-#endif
+extern void on_activate(GtkApplication*, gpointer);

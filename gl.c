@@ -1,8 +1,11 @@
 #include <math.h>
 #include "gl.h"
 #include "data.h"
-#include "glexp.h"
+//#include "glexp.h"
+#include <epoxy/gl.h>
+
 static unsigned int vao[22], program[4];
+
 static unsigned int init_shader(GLenum type, const char *path)
 {
     unsigned int shader = glCreateShader(type);
@@ -33,6 +36,7 @@ static unsigned int init_shader(GLenum type, const char *path)
     }
     return -1;
 }
+
 static void bind_vao_vbo_ebo(unsigned int vao, unsigned int vbo, unsigned int ebo, size_t dataSize, void *data, size_t indicesSize, const void *indices)
 {
     glBindVertexArray(vao);
@@ -46,6 +50,7 @@ static void bind_vao_vbo_ebo(unsigned int vao, unsigned int vbo, unsigned int eb
     glBindVertexArray(0);
     return;
 }
+
 static void bind_vao_vbo(unsigned int vao, unsigned int vbo, size_t size, void *data)
 {
     glBindVertexArray(vao);
@@ -57,6 +62,7 @@ static void bind_vao_vbo(unsigned int vao, unsigned int vbo, size_t size, void *
     glBindVertexArray(0);
     return;
 }
+
 static bool init_program(unsigned int *program, unsigned int vertshader, unsigned int fragshader)
 {
     *program = glCreateProgram();
@@ -76,6 +82,7 @@ static bool init_program(unsigned int *program, unsigned int vertshader, unsigne
     }
     return true;
 }
+
 void on_realize(GtkGLArea *area)
 {
     gtk_gl_area_make_current(area);
@@ -91,19 +98,19 @@ void on_realize(GtkGLArea *area)
     glHint(GL_POLYGON_SMOOTH, GL_NICEST);
     glLineWidth(0.2);
 
-    unsigned int roundShader = init_shader(GL_VERTEX_SHADER, "./round.glsl");
+    unsigned int roundShader = init_shader(GL_VERTEX_SHADER, "./round.vert");
     if (roundShader == -1)
         return;
-    unsigned int fragShader = init_shader(GL_FRAGMENT_SHADER, "./frag.glsl");
+    unsigned int fragShader = init_shader(GL_FRAGMENT_SHADER, "./frag.frag");
     if (fragShader == -1)
         return;
-    unsigned int greyShader = init_shader(GL_FRAGMENT_SHADER, "./grey.glsl");
+    unsigned int greyShader = init_shader(GL_FRAGMENT_SHADER, "./grey.frag");
     if (greyShader == -1)
         return;
-    unsigned int whiteShader = init_shader(GL_FRAGMENT_SHADER, "./white.glsl");
+    unsigned int whiteShader = init_shader(GL_FRAGMENT_SHADER, "./white.grag");
     if (whiteShader == -1)
         return;
-    unsigned int blackShader = init_shader(GL_FRAGMENT_SHADER, "./black.glsl");
+    unsigned int blackShader = init_shader(GL_FRAGMENT_SHADER, "./black.frag");
     if (blackShader == -1)
         return;
     
@@ -155,6 +162,7 @@ void on_realize(GtkGLArea *area)
     glDetachShader(program[3], whiteShader);
     return;
 }
+
 bool on_render(GtkGLArea *area, GdkGLContext *context)
 {
     glViewport(0, 0, gtk_widget_get_allocated_width(GTK_WIDGET(area)), gtk_widget_get_allocated_height(GTK_WIDGET(area)));
