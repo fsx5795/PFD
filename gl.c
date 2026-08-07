@@ -14,16 +14,24 @@ static unsigned int init_shader(GLenum type, const char *path)
         fprintf(stderr, "[dbg] 读取着色器: %s\n", path);
         fseek(fp, 0, SEEK_END);
         long leng = ftell(fp);
+#ifdef linux
         char data[leng];
         char *p = data;
         memset(data, '\0', leng);
         rewind(fp);
         fread(data, 1, leng, fp);
+#else
+        char* p = malloc(leng);
+        memset(p, '\0', leng);
+        rewind(fp);
+        fread(p, 1, leng, fp);
+#endif
         fclose(fp);
         glShaderSource(shader, 1, (const char * const*)&p, NULL);
         glCompileShader(shader);
         int status, logLen = 0;
         glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+        free(p);
         if (status == GL_FALSE) {
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLen);
             if (logLen > 0) {
