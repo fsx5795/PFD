@@ -51,13 +51,14 @@ unsigned int roundIndices[364 * 3 + 10 * 3] = { 0 };
 
 void init_data(void)
 {
+    //姿态仪
     //由于最右侧有垂直速度，因此中心点偏左
     const float center[2] = { -0.1f, 0.0f };
-    //姿态仪
+    //右上角圆弧的起点
     roundRect[0][0] = 0.4f + center[0];
     roundRect[0][1] = 0.5f + center[1];
-    //顺时针旋转
     for (int i = 1; i <= 90; ++i) {
+        //从(0,1)开始顺时针旋转至(1,0)
         roundRect[i][0] = sinf(M_PI / 180 * i) * 0.1 + roundRect[0][0];
         roundRect[i][1] = cosf(M_PI / 180 * i) * 0.1 + roundRect[0][1] - 0.1;
     }
@@ -79,6 +80,7 @@ void init_data(void)
         roundRect[273 + i][0] = -cosf(M_PI / 180 * i) * 0.1 + roundRect[273][0] + 0.1;
         roundRect[273 + i][1] = sinf(M_PI / 180 * i) * 0.1 + roundRect[273][1];
     }
+    //右上角圆弧圆心
     roundRect[364][0] = roundRect[0][0];
     roundRect[364][1] = roundRect[0][1] - 0.1;
     roundRect[365][0] = roundRect[91][0] - 0.1;
@@ -88,24 +90,28 @@ void init_data(void)
     roundRect[367][0] = roundRect[273][0] + 0.1;
     roundRect[367][1] = roundRect[273][1];
 
+    //建立三角形索引
     for (int i = 0; i < 360 * 3 + 4 * 3; ++i) {
         switch (i % 3) {
-        case 0:
-            roundIndices[i] = i / 3;
-            break;
-        case 1:
-            roundIndices[i] = roundIndices[i - 1] + 1;
-            break;
-        default:
-            if (i < 90 * 3 + 1)
-                roundIndices[i] = 364;
-            else if (i < 181 * 3)
-                roundIndices[i] = 365;
-            else if (i < 272 * 3)
-                roundIndices[i] = 366;
-            else
-                roundIndices[i] = 367;
-            break;
+            //三角形第一个点索引
+            case 0:
+                roundIndices[i] = i / 3;
+                break;
+            //三角形第二个点索引
+            case 1:
+                roundIndices[i] = roundIndices[i - 1] + 1;
+                break;
+            //三角形第三个点索引
+            default:
+                if (i < 90 * 3 + 1)
+                    roundIndices[i] = 364;
+                else if (i < 181 * 3)
+                    roundIndices[i] = 365;
+                else if (i < 272 * 3)
+                    roundIndices[i] = 366;
+                else
+                    roundIndices[i] = 367;
+                break;
         }
     }
     
