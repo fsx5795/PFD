@@ -1,4 +1,7 @@
 const canvas = document.querySelector('canvas')
+canvas.width = canvas.clientWidth
+canvas.height = canvas.clientHeight
+
 const gl = canvas.getContext('webgl2')
 
 async function createShader(gl, type, source) {
@@ -32,7 +35,7 @@ if (gl instanceof WebGL2RenderingContext) {
         const positions = [
             0, 0,
             0, 0.5,
-            0.7, 0,
+            0.7, 0
         ]
 
         const positionBuffer = gl.createBuffer()
