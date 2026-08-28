@@ -1,5 +1,26 @@
 #include <math.h>
+#include <stdlib.h>
 #include "matrix.h"
+
+struct Matrix
+{
+    int row;
+    int col;
+    double *data;
+};
+
+Matrix create_matrix(int row, int col)
+{
+    Matrix mat;
+    mat.row = row;
+    mat.col = col;
+    mat.data = malloc(row * col * sizeof(double));
+    return mat;
+}
+
+void mat_rotate_2d(float *matrix, int angle)
+{
+}
 
 void mat_identity(float *matrix)
 {

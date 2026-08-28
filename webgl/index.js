@@ -1,3 +1,5 @@
+import { rotate } from './matrix.js'
+
 const canvas = document.querySelector('canvas')
 canvas.width = canvas.clientWidth
 canvas.height = canvas.clientHeight
@@ -32,30 +34,43 @@ if (gl instanceof WebGL2RenderingContext) {
         console.log(gl.getProgramInfoLog(program))
         gl.deleteProgram(program)
     } else {
-        const positions = [
-            0, 0,
-            0, 0.5,
-            0.7, 0
-        ]
+        gl.useProgram(program)
 
-        const positionBuffer = gl.createBuffer()
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW)
+        const rightTopPoints = Array.from({ length: 90 }, () => Array(2).fill(0))
+        for (let i = 0; i < 90; ++i) {
+            rightTopPoints[i][0] = Math.cos(Math.PI / 180 * i)
+            rightTopPoints[i][1] = Math.sin(Math.PI / 180 * i)
+        }
+
+        const leftTopPoints = rotate(rightTopPoints, 90)
+
+        //启用 glsl 中的属性，否则这个属性值会是一个常量
+        const pos = gl.getAttribLocation(program, 'pos')
+        gl.enableVertexAttribArray(pos)
 
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
         gl.clearColor(0.0, 0.0, 0.0, 1.0)
         gl.clear(gl.COLOR_BUFFER_BIT)
 
-        gl.useProgram(program)
+        const rightTopVbo = gl.createBuffer()
+        gl.bindBuffer(gl.ARRAY_BUFFER, rightTopVbo)
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(rightTopPoints.flat()), gl.STATIC_DRAW)
 
+        //设置属性如何从缓冲区取出数据
+        gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0)
+        gl.drawArrays(gl.LINE_STRIP, 0, 90)
+
+        const leftTopVbo = gl.createBuffer()
+        gl.bindBuffer(gl.ARRAY_BUFFER, leftTopVbo)
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(leftTopPoints.flat()), gl.STATIC_DRAW)
+
+        //设置属性如何从缓冲区取出数据
+        gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0)
+        gl.drawArrays(gl.LINE_STRIP, 0, 90)
+
+        /*
         const vao = gl.createVertexArray()
         gl.bindVertexArray(vao)
-
-        //启用 glsl 中的属性，否则这个属性值会是一个常量
-        const posintionAttributeLocation = gl.getAttribLocation(program, 'pos')
-        gl.enableVertexAttribArray(posintionAttributeLocation)
-        //设置属性如何从缓冲区取出数据
-        gl.vertexAttribPointer(posintionAttributeLocation, 2, gl.FLOAT, false, 0, 0)
-        gl.drawArrays(gl.TRIANGLES, 0, 3)
+        */
     }
 }
