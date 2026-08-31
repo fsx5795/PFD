@@ -1,6 +1,6 @@
 #version 300 es
-in vec4 pos;
+in vec2 pos;
 void main()
 {
-    gl_Position = pos;
+    gl_Position = vec4(pos, 0.0, 1.0);
 }
